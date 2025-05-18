@@ -56,31 +56,49 @@ python main.py
 manim_code = """
 from manim import *
 
-class SineWave(Scene):
+class SimpleSineWave(Scene):
     def construct(self):
-        # Create axes
-        axes = Axes(
-            x_range=[-4, 4, 1],
+        # Create a number plane
+        axes = NumberPlane(
+            x_range=[-5, 5, 1],
             y_range=[-2, 2, 1],
-            axis_config={"color": BLUE},
+            background_line_style={
+                "stroke_color": BLUE_D,
+                "stroke_width": 1,
+                "stroke_opacity": 0.5
+            }
         )
         
-        # Create sine wave
-        sine_wave = axes.plot(
+        # Create the sine function graph
+        sine_function = axes.plot(
             lambda x: np.sin(x),
+            x_range=[-5, 5],
             color=YELLOW
         )
         
-        # Add labels
-        labels = axes.get_axis_labels(
-            x_label="x",
-            y_label="sin(x)"
+        # Create a function label
+        function_label = Text("y = sin(x)", color=YELLOW).scale(0.7)
+        function_label.to_corner(UR).shift(DOWN + LEFT)
+        
+        # Draw everything
+        self.play(Create(axes))
+        self.play(Create(sine_function))
+        self.play(Write(function_label))
+        
+        # Create a dot to move along the sine wave
+        dot = Dot(color=RED)
+        dot.move_to(axes.c2p(-5, np.sin(-5)))
+        
+        self.play(Create(dot))
+        
+        # Move the dot along the sine wave
+        self.play(
+            dot.animate.move_to(axes.c2p(5, np.sin(5))),
+            rate_func=linear,
+            run_time=6
         )
         
-        # Create the animation
-        self.play(Create(axes), Create(labels))
-        self.play(Create(sine_wave))
-        self.wait(2)
+        self.wait(1)
 """
 
 # Execute the code
@@ -102,6 +120,10 @@ After executing Manim code, the generated videos can be found in the following l
 The output files follow Manim's naming convention:
 - Video files: `[SceneName]_[Quality].mp4`
 - Example: `SquareToCircle_1080p.mp4`
+
+<p align="center">
+  <img src="media/sineWave.png" alt="Neural Style Transfer">
+</p>
 
 You can view the videos using any standard video player. The console output will also display the path to the generated video after successful execution.
 
