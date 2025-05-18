@@ -49,7 +49,7 @@ python main.py
    - `execute_manim_code(manim_code: str)`: Executes Manim code and generates animations
    - `cleanup_manim_temp_dir(directory: str)`: Cleans up temporary directories after execution
 
-### Example
+### Example Code from Claude Desktop
 
 ```python
 # Example Manim code
@@ -116,7 +116,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[Your chosen license]
+This MCP Server is licensed with MIT License
 
 ## Acknowledgments
 
