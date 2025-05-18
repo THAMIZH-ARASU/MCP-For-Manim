@@ -22,9 +22,9 @@ git clone https://github.com/THAMIZH-ARASU/MCP-For-Manim.git
 cd MCP_for_Manim
 ```
 
-2. Install the required dependencies:
+2. Install the required dependencies using uv package manager:
 ```bash
-pip install -r requirements.txt
+uv add [package name]
 ```
 
 3. Set up Manim:
