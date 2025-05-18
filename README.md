@@ -7,7 +7,6 @@ A FastMCP-based tool for executing Manim animations through a server interface. 
 - Execute Manim code through a FastMCP server
 - Automatic temporary directory management
 - Cleanup utilities for generated files
-- Environment variable configuration support
 
 ## Prerequisites
 
@@ -19,7 +18,7 @@ A FastMCP-based tool for executing Manim animations through a server interface. 
 
 1. Clone this repository:
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/THAMIZH-ARASU/MCP-For-Manim.git
 cd MCP_for_Manim
 ```
 
@@ -57,16 +56,54 @@ python main.py
 manim_code = """
 from manim import *
 
-class SquareToCircle(Scene):
+class SineWave(Scene):
     def construct(self):
-        circle = Circle()
-        circle.set_fill(BLUE, opacity=0.5)
-        self.play(Create(circle))
+        # Create axes
+        axes = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-2, 2, 1],
+            axis_config={"color": BLUE},
+        )
+        
+        # Create sine wave
+        sine_wave = axes.plot(
+            lambda x: np.sin(x),
+            color=YELLOW
+        )
+        
+        # Add labels
+        labels = axes.get_axis_labels(
+            x_label="x",
+            y_label="sin(x)"
+        )
+        
+        # Create the animation
+        self.play(Create(axes), Create(labels))
+        self.play(Create(sine_wave))
+        self.wait(2)
 """
 
 # Execute the code
 result = execute_manim_code(manim_code)
 ```
+
+## Viewing Output Videos
+
+After executing Manim code, the generated videos can be found in the following locations:
+
+1. **Main Output Directory**: `media/`
+   - Contains all generated animations and assets
+   - Videos are typically stored in `media/videos/` subdirectory
+
+2. **Temporary Directory**: `media/manim_tmp/`
+   - Contains the latest generated video and scene files
+   - Useful for debugging and immediate access to the most recent output
+
+The output files follow Manim's naming convention:
+- Video files: `[SceneName]_[Quality].mp4`
+- Example: `SquareToCircle_1080p.mp4`
+
+You can view the videos using any standard video player. The console output will also display the path to the generated video after successful execution.
 
 ## Directory Structure
 
