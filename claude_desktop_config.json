@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "FastMCP": {
+      "command": "path/to/your/.local/bin/uv.EXE",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "mcp",
+        "run",
+        "path/to/your/main.py"
+      ],
+      "env": {
+        "MANIM_EXECUTABLE": "/Users/[Your_username]/anaconda3/envs/manim2/Scripts/manim.exe"
+      }
+    }
+  }
+}
