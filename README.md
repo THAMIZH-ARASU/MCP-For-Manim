@@ -13,6 +13,7 @@ A FastMCP-based tool for executing Manim animations through a server interface. 
 - Python 3.x
 - Manim installation
 - FastMCP
+- Claude Desktop (optional)
 
 ## Installation
 
