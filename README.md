@@ -1,4 +1,4 @@
-# Manim Control Protocol (MCP)
+# Model Context Protocol (MCP) Server for creating Manim animations
 
 A FastMCP-based tool for executing Manim animations through a server interface. This project provides a convenient way to generate mathematical animations using Manim through a controlled protocol.
 
