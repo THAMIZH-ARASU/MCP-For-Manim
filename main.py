@@ -3,64 +3,53 @@ import tempfile
 import os
 import shutil
 from mcp.server.fastmcp import FastMCP
+animator_ctrl = FastMCP()
 
-mcp = FastMCP()
+ANIM_BIN = os.getenv("ANIM_BINARY_PATH", "manim")  # /path/to/main.exe
+WORKSPACE_REGISTRY = {}
+OUTPUT_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "renders")
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)  
 
-# Get Manim executable path from environment variables or assume it's in the system PATH
-MANIM_EXECUTABLE = os.getenv("MANIM_EXECUTABLE", "manim")   #MANIM_PATH "/Users/[Your_username]/anaconda3/envs/manim2/Scripts/manim.exe"
-
-TEMP_DIRS = {}
-BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "media")
-os.makedirs(BASE_DIR, exist_ok=True)  # Ensure the media folder exists
-
-@mcp.tool()
-def execute_manim_code(manim_code: str) -> str:
-    """Execute the Manim code"""
-    # tmpdir = tempfile.mkdtemp()  # Creates a temp directory that won't be deleted immediately
-    tmpdir = os.path.join(BASE_DIR, "manim_tmp")  
-    os.makedirs(tmpdir, exist_ok=True)  # Ensure the temp folder exists
-    script_path = os.path.join(tmpdir, "scene.py")
+@animator_ctrl.tool()
+def render_animation_script(animation_source: str) -> str:
+    """Process and render the animation source code"""
+    
+    workspace = os.path.join(OUTPUT_FOLDER, "animation_workspace")  
+    os.makedirs(workspace, exist_ok=True)
+    source_file = os.path.join(workspace, "animation_scene.py")
     
     try:
-        # Write the Manim script to the temp directory
-        with open(script_path, "w") as script_file:
-            script_file.write(manim_code)
         
-        # Execute Manim with the correct path
-        result = subprocess.run(
-            [MANIM_EXECUTABLE, "-p", script_path], #MANIM_PATH "/Users/[Your_username]/anaconda3/envs/manim2/Scripts/manim.exe"
+        with open(source_file, "w") as file_handle:
+            file_handle.write(animation_source)
+        
+       
+        process_result = subprocess.run(
+            [ANIM_BIN, "-p", source_file],
             capture_output=True,
             text=True,
-            cwd=tmpdir
+            cwd=workspace
         )
-
-        if result.returncode == 0:
-            TEMP_DIRS[tmpdir] = True
-            print(f"Check the generated video at: {tmpdir}")
-
-            return "Execution successful. Video generated."
+        if process_result.returncode == 0:
+            WORKSPACE_REGISTRY[workspace] = True
+            print(f"Animation successfully rendered at: {workspace}")
+            return "Render completed successfully. Animation file generated."
         else:
-            return f"Execution failed: {result.stderr}"
-
+            return f"Render process failed: {process_result.stderr}"
     except Exception as e:
-        return f"Error during execution: {str(e)}"
+        return f"Error during animation processing: {str(e)}"
 
-
-
-@mcp.tool()
-def cleanup_manim_temp_dir(directory: str) -> str:
-    """Clean up the specified Manim temporary directory after execution."""
+@animator_ctrl.tool()
+def purge_workspace(workspace_path: str) -> str:
+    """Remove the specified animation workspace after rendering is complete."""
     try:
-        if os.path.exists(directory):
-            shutil.rmtree(directory)
-            return f"Cleanup successful for directory: {directory}"
+        if os.path.exists(workspace_path):
+            shutil.rmtree(workspace_path)
+            return f"Workspace cleanup completed: {workspace_path}"
         else:
-            return f"Directory not found: {directory}"
+            return f"Workspace not found: {workspace_path}"
     except Exception as e:
-        return f"Failed to clean up directory: {directory}. Error: {str(e)}"
-
+        return f"Failed to clean workspace: {workspace_path}. Error: {str(e)}"
 
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
-
-
+    animator_ctrl.run(transport="stdio")
